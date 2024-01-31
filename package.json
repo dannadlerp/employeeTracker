@@ -1,0 +1,31 @@
+{
+  "name": "employeetracker",
+  "version": "1.0.0",
+  "description": "command-line app to manager employee information in a company",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dannadlerp/employeeTracker.git"
+  },
+  "keywords": [
+    "employee",
+    "tracker",
+    "cms",
+    "node",
+    "command-line"
+  ],
+  "author": "Dan Nadler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dannadlerp/employeeTracker/issues"
+  },
+  "homepage": "https://github.com/dannadlerp/employeeTracker#readme",
+  "devDependencies": {
+    "inquirer": "^8.2.4",
+    "mysql2": "^3.9.1",
+    "nodemon": "^3.0.3"
+  }
+}
