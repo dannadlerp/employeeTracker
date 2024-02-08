@@ -4,7 +4,9 @@
   "description": "command-line app to manager employee information in a company",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "start": "node ./index.js"
+
   },
   "repository": {
     "type": "git",

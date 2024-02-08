@@ -1,5 +1,20 @@
 const inquirer = require('inquirer');
 const mysql2 = require('mysql2');
+const express = require('express');
+const app = express();
+const employeeRoutes = require('./routes/employeeRoutes');
+const roleRoutes = require('./routes/roleRoutes');
+const deptRoutes = require('./routes/deptRoutes');
+
+app.use('/employee', employeeRoutes);
+app.use('/role', roleRoutes);
+app.use('/dept', deptRoutes);
+
+const port = process.env.PORT || 3001;
+app.listen(port, () => {
+  console.log("listening...");
+});
+
 
 const init = async () => {
 mysql2
@@ -16,7 +31,7 @@ await inquirer
 ])
 
 .then(
-    // => {};
+    // => { };
 )
 
 console.log("finished");
