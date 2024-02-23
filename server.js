@@ -1,8 +1,8 @@
+const connection = require('./config/connection');
 const express = require('express');
-// Import and require mysql2
-const mysql = require('mysql2');
-
-const PORT = process.env.PORT || 3001;
+const mysql = require('mysql2'); // Import and require mysql2
+const PORT = process.env.PORT || 3001; //use PORT var or 3001 by default
+const DB_PWD = process.env.DB_PWD //get password from .env
 const app = express();
 
 // Express middleware
@@ -10,19 +10,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Connect to database
-const db = mysql.createConnection(
-  {
-    host: 'localhost',
-    // MySQL username,
-    user: 'root',
-    // TODO: Add MySQL password here
-    password: '',
-    database: 'movies_db'
-  },
-  console.log(`Connected to the movies_db database.`)
-);
+connection.connect((error) => {
+  if (error) throw error;
+  console.log(`Connected to the database.`);
+});
 
-// Create a movie
 app.post('/api/new-movie', ({ body }, res) => {
   const sql = `INSERT INTO movies (movie_name)
     VALUES (?)`;
@@ -123,3 +115,4 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
