@@ -44,4 +44,3 @@ function init() {
 
   console.log("finished");
 }
-init();
