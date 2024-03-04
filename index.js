@@ -36,10 +36,45 @@ function init() {
           console.table(res);
           init(); //brings back to menu
         });
-      }
+      } else if (answers.main_selection === "View all roles") {
+        connection.query("SELECT * FROM role", (err, res) => {
+          if (err) throw err;
+          console.log("View all roles:");
+          console.table(res);
+          init(); //brings back to menu
+        });
+      } else if (answers.main_selection === "View all employees") {
+        connection.query("SELECT * FROM employee", (err, res) => {
+          if (err) throw err;
+          console.log("View all employees:");
+          console.table(res);
+          init(); //brings back to menu
+        });
+      } else if (answers.main_selection === "Add a department") {
+        inquirer
+        .prompt([
+          {
+            name: "dept_input",
+            type: "input",
+            message: "Please input the department name to add:"
+          },
+        ])
+        .then((answer) => {
+          connection.query("INSERT INTO department (name) VALUES (?)", //VALUES (?) creates a placeholder for future value
+          [answer.dept_input],
+          (err, res) => {
+            if (err) throw err;
+        })
+        connection.query("SELECT * FROM employee", (err, res) => {
+          if (err) throw err;
+          console.log("Department added successfully");
+          init(); //brings back to menu
+        });
+      })
     })
     .catch((error) => {
-      errorHandler(error);
+      errorHandler(res, err);
+      
     });
 
   console.log("finished");
