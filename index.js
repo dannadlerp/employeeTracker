@@ -74,45 +74,53 @@ function init() {
             );
           });
       } else if (answers.main_selection === "Add a role") {
-        inquirer
-          .prompt([
-            {
-              name: "role_input",
-              type: "input",
-              message: "Please input the role name to add:",
-            },
-            {
-              name: "salary_input",
-              type: "input",
-              message: "Please input the role salary to add:",
-              validate: function (value) {
-                return (
-                  Number.isInteger(Number(value)) ||
-                  "Please enter a valid integer"
-                );
+        connection.query("SELECT * FROM department", (err, res) => {
+          if (err) throw err;
+
+          const departmentChoices = res.map((department) => department.name);
+
+          inquirer
+            .prompt([
+              {
+                name: "role_input",
+                type: "input",
+                message: "Please input the role name to add:",
               },
-            },
-            {
-              name: "role_dept",
-              type: "list",
-              choices: ["Contractors", "Accounting"],
-              message: "Please select which department the role is in:",
-            },
-          ])
-          .then((answer) => {
-            connection.query(
-              "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", //VALUES (?) creates a placeholder for future value
-              [answer.role_input, answer.salary_input, answer.role_dept],
-              (err, res) => {
-                if (err) throw err;
-                console.log("Role added successfully");
-                connection.query("SELECT * FROM role", (err, res) => {
+              {
+                name: "salary_input",
+                type: "input",
+                message: "Please input the role salary to add:",
+                validate: function (value) {
+                  return (
+                    Number.isInteger(Number(value)) ||
+                    "Please enter a valid integer"
+                  );
+                },
+              },
+              {
+                name: "role_dept",
+                type: "list",
+                choices: departmentChoices,
+                message: "Please select which department the role is in:",
+              },
+            ])
+            .then((answer) => {
+              const roleDeptID = departmentChoices.indexOf(answer.role_dept);
+
+              connection.query(
+                "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", //VALUES (?) creates a placeholder for future value
+                [answer.role_input, answer.salary_input, roleDeptID],
+                (err, res) => {
                   if (err) throw err;
-                });
-                init(); //brings back to menu
-              }
-            );
-          });
+                  console.log("Role added successfully");
+                  connection.query("SELECT * FROM role", (err, res) => {
+                    if (err) throw err;
+                  });
+                  init(); //brings back to menu
+                }
+              );
+            });
+        });
       }
       /* .catch((error) => {
       errorHandler(res, err); */
