@@ -37,19 +37,42 @@ function init() {
           init(); //brings back to menu
         });
       } else if (answers.main_selection === "View all roles") {
-        connection.query("SELECT * FROM role", (err, res) => {
-          if (err) throw err;
-          console.log("View all roles:");
-          console.table(res);
-          init(); //brings back to menu
-        });
+        connection.query(
+          "SELECT role.id, role.title, role.salary, department.name AS department FROM role INNER JOIN department ON role.department_id = department.id",
+          (err, res) => {
+            if (err) throw err;
+            console.log("View all roles:");
+            console.table(res);
+            init(); //brings back to menu
+          }
+        );
       } else if (answers.main_selection === "View all employees") {
-        connection.query("SELECT * FROM employee", (err, res) => {
-          if (err) throw err;
-          console.log("View all employees:");
-          console.table(res);
-          init(); //brings back to menu
-        });
+        connection.query(
+          `
+            SELECT 
+                employee.id,
+                employee.first_name,
+                employee.last_name,
+                role.title AS role_name,
+                role.salary,
+                department.name AS department,
+                IFNULL(CONCAT(manager.first_name, ' ', manager.last_name), 'none') AS manager_name
+            FROM 
+                employee
+            INNER JOIN 
+                role ON employee.role_id = role.id
+            INNER JOIN 
+                department ON role.department_id = department.id
+            LEFT JOIN 
+                employee AS manager ON employee.manager_id = manager.id
+        `,
+          (err, res) => {
+            if (err) throw err;
+            console.log("View all employees:");
+            console.table(res);
+            init(); //brings back to menu
+          }
+        );
       } else if (answers.main_selection === "Add a department") {
         inquirer
           .prompt([
@@ -181,6 +204,59 @@ function init() {
               });
           });
         });
+      } else if (answers.main_selection === "Update an employee role") {
+        connection.query("SELECT * FROM role", (err, roleRes) => {
+          if (err) throw err;
+          const roleChoices = roleRes.map((role) => role.title);
+
+          connection.query("SELECT * FROM employee", (err, employeeRes) => {
+            if (err) throw err;
+            const employeeChoices = employeeRes.map((employee) => ({
+              name: `${employee.first_name} ${employee.last_name}`,
+              value: employee.id,
+            }));
+
+            inquirer
+              .prompt([
+                {
+                  name: "employee_select",
+                  type: "list",
+                  choices: employeeChoices,
+                  message:
+                    "Please select the employee whose role you want to update:",
+                },
+                {
+                  name: "role_select",
+                  type: "list",
+                  choices: roleChoices,
+                  message: "Please select the new role for the employee:",
+                },
+              ])
+              .then((answers) => {
+                const roleId = roleRes.reduce((data, role) => {
+                  if (role.title === answers.role_select) {
+                    data = role.id;
+                  }
+                  return data;
+                }, null);
+                const employeeId = answers.employee_select;
+
+                connection.query(
+                  "UPDATE employee SET role_id = ? WHERE id = ?", // assign to ? since they exist now
+                  [roleId, employeeId],
+                  (err, res) => {
+                    if (err) throw err;
+                    console.log("Employee role updated successfully");
+                    init(); // brings back to menu
+                  }
+                );
+              });
+          });
+        });
+      } else if (answers.main_selection === "Exit") {
+        console.log("Goodbye!");
+        connection.end(); //closes app
+        process.exit();
       }
       /* .catch((error) => {
       errorHandler(res, err); */
