@@ -1,6 +1,9 @@
 Github repo URL: https://github.com/dannadlerp/employeeTracker
 Video Walkthrough: https://drive.google.com/file/d/1DuForbziQlPpuVdLCI8PEwE8tA7iVqrV/view?usp=sharing
 
+![image](https://github.com/dannadlerp/employeeTracker/assets/142226474/b400251d-65c3-4f80-9b0f-79a1cb3837fe)
+
+
 Employee Tracker
 
 # Table of Contents
